@@ -1,7 +1,0 @@
-настройка мастер-слейв
-postgres@student:~$ repmgr -f /etc/repmgr/15/repmgr.conf primary register
-INFO: connecting to primary database...
-NOTICE: attempting to install extension "repmgr"
-NOTICE: "repmgr" extension successfully installed
-NOTICE: primary node record (ID: 1) registered
-postgres@student:~$

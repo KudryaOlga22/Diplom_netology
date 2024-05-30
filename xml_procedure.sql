@@ -7,15 +7,18 @@ DECLARE
     xml_data TEXT;
 BEGIN
     -- Выполняем запрос на получение списка товаров с ненулевым остатком
-    sql_query := 'SELECT * FROM public.remaining_products WHERE quantity_in_stock > 0';
-    EXECUTE sql_query INTO TEMPORARY TABLE remaining_products;
+    sql_query := 'SELECT r.id , p.product_name , r.quantity_in_stock  
+FROM public.remaining_products r
+join public.product p on p.id  = r.id_product 
+WHERE quantity_in_stock > 0 ;';
+    EXECUTE sql_query;
 
     -- Преобразуем результаты запроса в XML-формат
     SELECT xmlagg(xmlforest(
-        product_id AS "id",
-        product_name AS "name",
+        id AS "id",
+        product_name AS "product_name",
         quantity_in_stock AS "quantity"
-    ))::xml into xml_data FROM remaining_products;
+    ))::xml into xml_data FROM generate_xml;
 
     -- Сохраняем XML-файл на сервере
     PERFORM lo_unlink('/tmp/products.xml'); -- Удаляем предыдущую версию файла
@@ -24,3 +27,4 @@ BEGIN
     -- Загружаем XML-файл пользователю
     RAISE NOTICE 'Скачивание файла: /tmp/products.xml';
 END;
+$$
